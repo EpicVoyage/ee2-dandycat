@@ -5,15 +5,11 @@
  * @package	Dandy Cat
  * @subpackage	Modules
  * @author	EpicVoyage
- * @copyright	Copyright (c) 2012 EpicVoyage
+ * @copyright	Copyright (c) 2012-2019 EpicVoyage
  */
 
 class Dandy_cat_mcp 
 {
-	function Mx_google_map_mcp($switch = TRUE) {
-		//$this->EE =& get_instance();
-	}
-
 	function index() {
 		return '';
 	}

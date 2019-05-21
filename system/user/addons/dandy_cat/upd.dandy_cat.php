@@ -9,12 +9,7 @@
  * @link		https://www.epicvoyage.org/ee/dandy_cat
  */
 class Dandy_cat_upd {
-	var $version = '1.0';
-
-	function Dandy_cat_upd($switch = TRUE) {
-		// Make a local reference to the ExpressionEngine super object
-		$this->EE =& get_instance();
-	}
+	var $version = '0.2';
 
 	/**
 	 * Installer for the Mx_google_map module
@@ -26,7 +21,7 @@ class Dandy_cat_upd {
 			'has_cp_backend' => 'n'
 		);
 
-		$this->EE->db->insert('modules', $data);
+		ee()->db->insert('modules', $data);
 
 		return TRUE;
 	}
@@ -35,20 +30,20 @@ class Dandy_cat_upd {
 	 * Uninstall the Mx_google_map module
 	 */
 	function uninstall() {
-		$this->EE->db->select('module_id');
-		$query = $this->EE->db->get_where('modules', array('module_name' => $this->module_name));
+		ee()->db->select('module_id');
+		$query = ee()->db->get_where('modules', array('module_name' => $this->module_name));
 
-		$this->EE->db->where('module_id', $query->row('module_id'));
-		$this->EE->db->delete('module_member_groups');
+		ee()->db->where('module_id', $query->row('module_id'));
+		ee()->db->delete('module_member_groups');
 
-		$this->EE->db->where('module_name', $this->module_name);
-		$this->EE->db->delete('modules');
+		ee()->db->where('module_name', $this->module_name);
+		ee()->db->delete('modules');
 
-		$this->EE->db->where('class', $this->module_name);
-		$this->EE->db->delete('actions');
+		ee()->db->where('class', $this->module_name);
+		ee()->db->delete('actions');
 
-		$this->EE->db->where('class', $this->module_name.'_mcp');
-		$this->EE->db->delete('actions');
+		ee()->db->where('class', $this->module_name.'_mcp');
+		ee()->db->delete('actions');
 
 		return TRUE;
 	}

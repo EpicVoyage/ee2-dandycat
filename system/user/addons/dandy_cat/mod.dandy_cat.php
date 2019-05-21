@@ -9,28 +9,26 @@
  * @link	https://www.epicvoyage.org/ee/dandy_cat
  */
 class Dandy_cat {
-	function __construct() {
-		$this->EE =& get_instance();
-	}
-
 	function entries() {
 		# Hijack the Functions class.
-		$functions = $this->EE->functions;
-		$this->EE->functions = new Dandy_cat_EE_Functions;
+		$functions = ee()->functions;
+		ee()->evalStringInFacadeScope('<?php $this->loaded["functions_dandy_cat_backup"] = $this->loaded["functions"]; $this->loaded["functions"] = new Dandy_cat_EE_Functions; ?>', array());
+		// EE5 allowed us to do this: ee()->functions = new Dandy_cat_EE_Functions;
 
 		# Create a new instance of the EE Channel class so that it can do all of our heavy lifting.
 		$channel = new Channel;
 
 		# EE's Channel class completely refactors any category string with an '&' in it. Let's use commas to sneak past that bit of code.
-		if (isset($this->EE->TMPL->tagparams['category'])) {
-			$this->EE->TMPL->tagparams['category'] = str_replace('&', ',', $this->EE->TMPL->tagparams['category']);
+		if (isset(ee()->TMPL->tagparams['category'])) {
+			ee()->TMPL->tagparams['category'] = str_replace('&', ',', ee()->TMPL->tagparams['category']);
 		}
 
 		# We use the the Channel Entries workhorse for most of this.
 		$entries = $channel->entries();
 
 		# Restore the Functions class and return.
-		$this->EE->functions =& $functions;
+		ee()->evalStringInFacadeScope('<?php $this->loaded["functions"] = $this->loaded["functions_dandy_cat_backup"]; ?>', array());
+		// EE5 allowed us to do this: ee()->functions = $functions;
 		return $entries;
 	}
 
@@ -43,7 +41,7 @@ class Dandy_cat {
 	#   $field = exp_categories.cat_id
 	#
 	# Output:
-	#   (exp_categories.cat_id IN (1, 2, 3) AND ...)
+	#   SQL: (exp_categories.cat_id IN (1, 2, 3) AND ...)
 	public static function parse($str, $field) {
 		static $c1 = 0, $c2 = 0;
 
@@ -88,7 +86,6 @@ class Dandy_cat {
 			}
 			$ret .= ')';
 		} else {
-			$EE =& get_instance();
 			if ($invert = (strncmp($str, '!', 1) == 0)) {
 				$str = str_replace('!', '', $str);
 			}
@@ -99,7 +96,7 @@ class Dandy_cat {
 			# Protect the database from each value.
 			$categories = explode('|', $str);
 			foreach ($categories as $k => $v) {
-				$categories[$k] = $EE->db->escape($v);
+				$categories[$k] = ee()->db->escape($v);
 			}
 
 			# Don't do anything for empty parenthesis.
